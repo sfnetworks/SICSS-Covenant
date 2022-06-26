@@ -37,20 +37,23 @@ class: center, middle, hide-logo
 PRE.fansi SPAN {padding-top: .25em; padding-bottom: .25em};
 &lt;/STYLE&gt;
 
-### About me...
+## About me ...
 
---
+I'm a research fellow in Statistics at the [University of Milano - Bicocca](https://en.unimib.it/), [Department of Economics, Management and Statistics](https://dems.unimib.it/en). 
 
-Research fellow in Statistics at the [University of Milano - Bicocca](https://en.unimib.it/), [Department of Economics, Management and Statistics](https://dems.unimib.it/en). 
+I'm a passionate R user and author of two R 📦(s): [`osmextract`](https://cran.r-project.org/package=osmextract) and [`sfnetworks`](https://cran.r-project.org/package=sfnetworks). 
+
+If you want to read more details, check my webpage: [https://agila5.github.io/](https://agila5.github.io/)
 
 ---
 class: center, middle, hide-logo
 
-## Let's start!
+
+## Let's start! 
 
 The slides can be found here: https://sfnetworks.github.io/SICSS-Covenant/slides
 
-The code to create them can be found here: https://github.com/sfnetworks/SICSS-Covenant
+All the R code can be found here: https://github.com/sfnetworks/SICSS-Covenant
 
 ???
 
@@ -61,12 +64,12 @@ class: middle, hide-logo
 
 ## Schedule 
 
-- 9.15 - 9.35: Brief introduction to the R package `sfnetworks`. 
+- 9.15 - 9.35: Brief introduction to the R package `sfnetworks` 
   * What are Geospatial Networks?
   * Motivations and philosophy behind `sfnetworks`
-- 9.35 - 9.45: Showcase the main preprocessing functions
-- 9.45 - 10.15: Live demo. Click on [sfnetworks-demo.R](https://github.com/sfnetworks/SICSS-Covenant/raw/master/sfnetworks-demo.R) to download the R script. 
-- 10.15 - 10.30: Q&amp;A or extra examples. 
+- 9.35 - 9.45: Showcase the main pre-processing functions
+- 9.45 - 10.15: Live demo. Check the code at [sfnetworks-demo.R](https://github.com/sfnetworks/SICSS-Covenant/raw/main/sfnetworks-demo.R) 
+- 10.15 - 10.30: Q&amp;A or additional examples
 
 You can install the stable version of `sfnetworks` from [CRAN](https://CRAN.R-project.org/package=sfnetworks) and the development version from the [develop](https://github.com/luukvdmeer/sfnetworks/tree/develop) branch of the github repo: 
 
@@ -75,9 +78,369 @@ You can install the stable version of `sfnetworks` from [CRAN](https://CRAN.R-pr
 remotes::install_github("luukvdmeer/sfnetworks", "develop")
 ```
 
+This tutorial is based on the github version of the package. 
+
 ???
 
 Again, don't forget to copy the links in chat!
+
+---
+class: center, top, hide-logo
+
+## &lt;span style="color:#b3b3b3"&gt;Tidy&lt;/span&gt; &lt;span style="color:#ffa500"&gt;Geospatial Networks&lt;/span&gt; &lt;span style="color:#b3b3b3"&gt;in R&lt;/span&gt;
+
+.left[
+.pull-left-70[
+![](figs/river_network.png)
+]
+]
+
+.pull-right-30[
+
+Graphs embedded in geographical space
+
+Nodes usually associated with **POINT** geometries
+
+Edges usually associated with **LINESTRING** geometries
+
+]
+
+???
+
+Underline that we cannot split the spatial and graph dimensions and that the topological information is not enough to describe the network, we need the spatial component. 
+
+---
+class: center, top, hide-logo
+
+## &lt;span style="color:#ffa500"&gt;Tidy&lt;/span&gt; &lt;span style="color:#b3b3b3"&gt;Geospatial Networks&lt;/span&gt; &lt;span style="color:#ffa500"&gt;in R&lt;/span&gt;
+
+.left[
+.pull-left-60[
+
+```r
+library(tidyverse)
+library(sfnetworks)
+roxel %&gt;%
+  as_tibble() %&gt;%
+  select(name, type)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;&lt;span style='color: #555555;'&gt;# A tibble: 851 x 2&lt;/span&gt;
+  name                  type       
+  &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;                 &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;fct&amp;gt;&lt;/span&gt;      
+&lt;span style='color: #555555;'&gt;1&lt;/span&gt; Havixbecker Strasse   residential
+&lt;span style='color: #555555;'&gt;2&lt;/span&gt; Pienersallee          secondary  
+&lt;span style='color: #555555;'&gt;3&lt;/span&gt; Schulte-Bernd-Strasse residential
+&lt;span style='color: #555555;'&gt;4&lt;/span&gt; &lt;span style='color: #BB0000;'&gt;NA&lt;/span&gt;                    path       
+&lt;span style='color: #555555;'&gt;5&lt;/span&gt; Welsingheide          residential
+&lt;span style='color: #555555;'&gt;# ... with 846 more rows&lt;/span&gt;
+&lt;/CODE&gt;&lt;/PRE&gt;
+]
+]
+
+.pull-right-40[
+
+&lt;img src="https://raw.githubusercontent.com/tidyverse/tidyverse/main/man/figures/logo.png" width="40%" /&gt;
+
+**The tidyverse**
+
+Collection of packages for data science
+
+Shared design philosophy
+
+Tidy data structures
+]
+
+???
+
+In that tibble we have that each row is an observation and columns are variables. 
+
+---
+class: center, top, hide-logo
+
+## &lt;span style="color:#b3b3b3"&gt;Tidy&lt;/span&gt; &lt;span style="color:#ffa500"&gt;Geospatial&lt;/span&gt; &lt;span style="color:#b3b3b3"&gt;Networks&lt;/span&gt; &lt;span style="color:#ffa500"&gt;in R&lt;/span&gt;
+
+.left[
+.pull-left-60[
+
+```r
+library(sf)
+roxel[1:3, "name"]
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;Simple feature collection with 3 features and 1 field
+Geometry type: LINESTRING
+Dimension:     XY
+Bounding box:  xmin: 7.532 ymin: 51.95 xmax: 7.534 ymax: 51.96
+Geodetic CRS:  WGS 84
+&lt;span style='color: #555555;'&gt;# A tibble: 3 x 2&lt;/span&gt;
+  name                                                 geometry
+  &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;                                        &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;LINESTRING [°]&amp;gt;&lt;/span&gt;
+&lt;span style='color: #555555;'&gt;1&lt;/span&gt; Havixbecker Strasse                (7.534 51.96, 7.533 51.96)
+&lt;span style='color: #555555;'&gt;2&lt;/span&gt; Pienersallee          (7.532 51.95, 7.532 51.95, 7.532 51.95)
+&lt;span style='color: #555555;'&gt;3&lt;/span&gt; Schulte-Bernd-Strasse (7.533 51.95, 7.533 51.95, 7.533 51.95)
+&lt;/CODE&gt;&lt;/PRE&gt;
+]
+]
+
+.pull-right-40[
+
+&lt;img src="https://user-images.githubusercontent.com/520851/34887433-ce1d130e-f7c6-11e7-83fc-d60ad4fae6bd.gif" width="45%" /&gt;
+
+**The sf package**
+
+R package for spatial data science
+
+Standardized storage of geographic features (e.g. points, lines, polygons)
+
+Geometric operations (intersections, unions, ..)
+
+]
+
+???
+
+Underline it's compatible with most dplyr and tidyr verbs. Each obs has it own geometry/location in space. 
+
+---
+class: center, top, hide-logo
+
+## &lt;span style="color:#b3b3b3"&gt;Tidy Geospatial&lt;/span&gt; &lt;span style="color:#ffa500"&gt;Networks in R&lt;/span&gt;
+
+.pull-left-60[
+.left[
+
+```r
+nodes = tibble(name = letters[1:3])
+edges = tibble(from = c(1,2,3), to = c(2,3,1))
+tidygraph::tbl_graph(nodes, edges)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;&lt;span style='color: #555555;'&gt;# A tbl_graph: 3 nodes and 3 edges
+#
+# A directed simple graph with 1 component
+#
+# Node Data: 3 x 1 (active)&lt;/span&gt;
+  name 
+  &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;
+&lt;span style='color: #555555;'&gt;1&lt;/span&gt; a    
+&lt;span style='color: #555555;'&gt;2&lt;/span&gt; b    
+&lt;span style='color: #555555;'&gt;3&lt;/span&gt; c    
+&lt;span style='color: #555555;'&gt;#
+# Edge Data: 3 x 2&lt;/span&gt;
+   from    to
+  &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt; &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;
+&lt;span style='color: #555555;'&gt;1&lt;/span&gt;     1     2
+&lt;span style='color: #555555;'&gt;2&lt;/span&gt;     2     3
+&lt;span style='color: #555555;'&gt;3&lt;/span&gt;     3     1
+&lt;/CODE&gt;&lt;/PRE&gt;
+]
+]
+
+.pull-right-40[
+
+&lt;img src="https://github.com/thomasp85/tidygraph/raw/master/man/figures/logo.png" width="45%" /&gt;
+
+
+**The tidygraph package**
+
+Tidy interface to the **igraph** library for graph analysis
+
+Models a graph as a collection of two tibbles
+
+]
+
+???
+
+It is a wrapper around igraph, which doesn't fit in the tidyverse workflow. Networks cannot really be modelled as tidy data, but the two tables (i.e. edges and nodes) are represented as tidy data. We could simply add a geometry column to a tbl_graph object but that doesn't work since tidygraph doesn't work what to do with the geometry column. 
+
+---
+class: center, top, hide-logo
+
+## Tidy Geospatial Networks in R!
+
+.pull-left[
+![](https://user-images.githubusercontent.com/520851/34887433-ce1d130e-f7c6-11e7-83fc-d60ad4fae6bd.gif)
+]
+
+.pull-right[
+&lt;img src="https://github.com/thomasp85/tidygraph/raw/master/man/figures/logo.png" width="38%" /&gt;
+]
+
+.center[
+&lt;img src="https://github.com/luukvdmeer/sfnetworks/raw/master/man/figures/logo.png" width="20%" /&gt;
+]
+
+---
+class: center, top, hide-logo
+
+## Tidy Geospatial Networks in R!
+
+**tidygraph:**
+
+&gt;  Relational data cannot in any meaningful way be encoded as a single tidy data frame. On the other hand, both node and edge data by itself fits very well within the tidy concept as each node and edge is, in a sense, a single observation. Thus, a close approximation of tidyness for relational data is two tidy data frames, one describing the node data and one describing the edge data.
+
+**sfnetworks:**
+
+&gt; A close approximation of tidyness for relational geospatial data is two sf objects, one describing the node data and one describing the edge data
+
+---
+class: top, hide-logo
+
+## The sfnetwork class
+
+.left[
+
+```r
+as_sfnetwork(roxel)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;&lt;span style='color: #555555;'&gt;# A sfnetwork with&lt;/span&gt; &lt;span style='color: #555555;'&gt;701&lt;/span&gt; &lt;span style='color: #555555;'&gt;nodes and&lt;/span&gt; &lt;span style='color: #555555;'&gt;851&lt;/span&gt; &lt;span style='color: #555555;'&gt;edges
+#
+# CRS: &lt;/span&gt; &lt;span style='color: #555555;'&gt;EPSG:4326&lt;/span&gt; &lt;span style='color: #555555;'&gt;
+#
+# A directed multigraph with 14 components with spatially explicit edges
+#
+# Node Data:     701 x 1 (active)&lt;/span&gt;
+&lt;span style='color: #555555;'&gt;# Geometry type: POINT&lt;/span&gt;
+&lt;span style='color: #555555;'&gt;# Dimension:     XY&lt;/span&gt;
+&lt;span style='color: #555555;'&gt;# Bounding box:  xmin: 7.523 ymin: 51.94 xmax: 7.547 ymax: 51.96&lt;/span&gt;
+&lt;span style='color: #555555;'&gt;# ... with 701 more rows, and 1 variable: geometry &amp;lt;GEOMETRY [°]&amp;gt;&lt;/span&gt;
+&lt;span style='color: #555555;'&gt;#
+# Edge Data:     851 x 5&lt;/span&gt;
+&lt;span style='color: #555555;'&gt;# Geometry type: LINESTRING&lt;/span&gt;
+&lt;span style='color: #555555;'&gt;# Dimension:     XY&lt;/span&gt;
+&lt;span style='color: #555555;'&gt;# Bounding box:  xmin: 7.523 ymin: 51.94 xmax: 7.547 ymax: 51.96&lt;/span&gt;
+&lt;span style='color: #555555;'&gt;# ... with 851 more rows, and 5 variables: from &amp;lt;int&amp;gt;, to &amp;lt;int&amp;gt;,&lt;/span&gt;
+&lt;span style='color: #555555;'&gt;#   name &amp;lt;chr&amp;gt;, type &amp;lt;fct&amp;gt;, geometry &amp;lt;GEOMETRY [°]&amp;gt;&lt;/span&gt;
+&lt;/CODE&gt;&lt;/PRE&gt;
+]
+
+---
+class: center, middle
+
+## What can we do?
+### Network pre-processing and cleaning
+
+---
+class: middle
+
+
+
+
+
+### Network pre-processing and cleaning
+
+#### Initial network
+
+.center[
+&lt;img src="slides_files/figure-html/clean2-1.png" width="864" /&gt;
+]
+
+---
+class: middle
+### Network pre-processing and cleaning
+
+#### Simplifying edges
+
+.center[
+&lt;img src="slides_files/figure-html/clean3-1.png" width="864" /&gt;
+]
+
+---
+class: middle
+### Network pre-processing and cleaning
+
+#### Subdividing edges
+
+.center[
+&lt;img src="slides_files/figure-html/clean4-1.png" width="864" /&gt;
+]
+
+---
+class: middle
+### Network pre-processing and cleaning
+
+#### Removing pseudo-nodes
+
+.center[
+&lt;img src="slides_files/figure-html/clean5-1.png" width="864" /&gt;
+]
+
+---
+class: middle
+
+### Network pre-processing and cleaning
+
+#### Simplifying intersections
+
+
+
+.center[
+&lt;img src="slides_files/figure-html/clean6-1.png" width="864" /&gt;
+]
+
+---
+class: middle
+
+## Live demo! 
+
+Now we will present a few basic concepts and simple examples using R code. Let's switch to [sfnetworks-demo.R](https://github.com/sfnetworks/SICSS-Covenant/raw/main/sfnetworks-demo.R).
+
+Please note that we will focus on road network analysis, but, in principle, the package can be used as a general tool for spatial networks (see [here](https://stackoverflow.com/questions/65958776/group-id-for-all-edges-between-points-using-sfnetwork-in-r) and [here](https://stackoverflow.com/questions/68809447/sequencing-of-river-network-calculation-using-sfnetworks-and-r) for examples of stream network analysis and [here](https://shriv-portfolio.netlify.app/post/infrastructure-flows/) for infrastructure flows).
+
+We also developed several more tools to analyse a spatial networks such as **graph and spatial morphers**, **graph and spatial filters** or **routing tools**. 
+Let's see more examples with live demo coding! 
+
+---
+
+## Conclusion 
+
+### Have your own examples or ideas for the package?
+
+--
+
+Join the [Discussion on GitHub](https://github.com/luukvdmeer/sfnetworks/discussions)
+
+--
+
+### Found a bug?
+
+--
+
+Let us know with an [issue here](https://github.com/luukvdmeer/sfnetworks/issues)!
+
+--
+
+### Have a question? 
+
+Feel free to add any question to [Stack Overflow](https://stackoverflow.com/questions/tagged/sfnetwork) using the tags `sfnetwork`. 
+
+.note[
+We will soon create a link between the tags `sfnetwork` (i.e. the name of the class) and `sfnetworks` (i.e. the name of the package). For the moment, you should use the tag `sfnetwork`. 
+]
+
+---
+class: center, middle
+
+### Thank you!
+
+#### Q&amp;A
+
+.note[
+.pull-left-70[
+.pull-left[
+&lt;img src="https://raw.githubusercontent.com/RConsortium/artwork/main/r_consortium/R_Consortium-logo-horizontal-color.png" width="50%" /&gt;
+]
+.pull-right[
+Slides powered by [xaringan](https://github.com/yihui/xaringan), [xaringanthemer](https://github.com/gadenbuie/xaringanthemer) and [flipbookr](https://github.com/EvaMaeRey/flipbookr). Slides originally developed by Luuk and Lorena, thanks!&lt;br&gt;&lt;br&gt;. 
+]
+]
+.pull-right-30[
+&lt;img src="https://opengeohub.org/themes/gavias_edubiz/logo.png" width="100%" /&gt;
+]
+]
+
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
