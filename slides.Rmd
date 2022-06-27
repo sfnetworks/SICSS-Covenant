@@ -454,11 +454,11 @@ class: middle
 
 ## Live demo! 
 
-Now we will present a few basic concepts and simple examples using R code. Let's switch to [sfnetworks-demo.R](https://github.com/sfnetworks/SICSS-Covenant/raw/main/sfnetworks-demo.R).
+Now we will present a few basic concepts and simple examples using R code. Let's switch to [sfnetworks-demo.R](https://github.com/sfnetworks/SICSS-Covenant/raw/main/sfnetworks-demo.R)
 
 Please note that we will focus on road network analysis, but, in principle, the package can be used as a general tool for spatial networks (see [here](https://stackoverflow.com/questions/65958776/group-id-for-all-edges-between-points-using-sfnetwork-in-r) and [here](https://stackoverflow.com/questions/68809447/sequencing-of-river-network-calculation-using-sfnetworks-and-r) for examples of stream network analysis and [here](https://shriv-portfolio.netlify.app/post/infrastructure-flows/) for infrastructure flows).
 
-We also developed several more tools to analyse a spatial networks such as **graph and spatial morphers**, **graph and spatial filters** or **routing tools**. 
+We also developed several more tools to analyse spatial networks such as **graph and spatial morphers**, **graph and spatial filters** or **routing tools**. 
 Let's see more examples with live demo coding! 
 
 ---
@@ -509,7 +509,7 @@ Slides powered by [xaringan](https://github.com/yihui/xaringan), [xaringanthemer
 ]
 .pull-right-30[
 ```{r, echo = FALSE, out.width="100%"}
-knitr::include_graphics("https://opengeohub.org/themes/gavias_edubiz/logo.png")
+knitr::include_graphics("https://4.bp.blogspot.com/_OXpMnfxUDqE/R_GrYYCT1EI/AAAAAAAAABY/GbElkcspz6Q/s400/logo.jpg")
 ```
 ]
 ]
