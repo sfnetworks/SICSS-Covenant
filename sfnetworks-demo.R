@@ -109,7 +109,7 @@ edges <- st_sfc(
 )
 
 # Plot the edges
-plot(edges, axes = TRUE, graticule = TRUE, lwd = 2, col = "darkred")
+plot(edges, axes = TRUE, graticule = TRUE, lwd = 3, col = sf.colors(4, categorical = TRUE))
 
 # Build the sfnetwork
 sfn <- as_sfnetwork(edges, directed = FALSE)
@@ -144,6 +144,12 @@ sfn
 
 # and plot it
 plot(sfn, axes = TRUE, graticule = TRUE)
+
+# Let's create an interactive representation
+nds <- st_as_sf(sfn, "nodes")[1:100, ]
+mapview(nds) + mapview(st_as_sf(sfn, "edges"))
+
+rm(nds)
 
 # In the next lines of code we will see several processing steps that are
 # FUNDAMENTAL for the analysis of street network data (in particular when the
@@ -302,6 +308,8 @@ sfn = sfn %>%
   convert(to_spatial_simple, .clean = TRUE) %>% 
   st_transform(32631)
 
+plot(sfn, axes = TRUE)
+
 # NB: There are several more operations that are defined in sfnetworks, check
 # out the introductory vignettes.
 
@@ -423,7 +431,7 @@ plot(sfn %N>% slice(c(10, 100)), col = cols[2:3], add = TRUE, pch = 16, cex = 2)
 p1 = st_sfc(st_point(c(535000, 730500)), crs = 32631)
 p2 = st_sfc(st_point(c(533900, 733050)), crs = 32631)
 
-st_network_paths(sfn, from = p1, to = c(p2, p3))
+st_network_paths(sfn, from = p1, to = p2)
 
 # Moreover, we can easily extract the shortest path (and not only the indices)
 # using the "to_spatial_shortest_path" morpher:
